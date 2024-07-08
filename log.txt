@@ -254,4 +254,72 @@ warning: Source file is more recent than executable.
 114			filename = spdk_file_get_name(file);
 (gdb) p path
 $1 = 0x7f2ddc118000 "/a.txt"
-(gdb) 
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 190753] will be detached.
+
+Quit anyway? (y or n) y
+Detaching from program: /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc, process 190753
+[Inferior 1 (process 190753) detached]
+ 04:28:39	-- blobfs/blobfs.sh@123 -- # md5sum /tmp/spdk_tmp_mount/rand_file
+dd9a3366b24c31ce2e2915124f54cf84  /tmp/spdk_tmp_mount/rand_file
+ 04:28:39	-- blobfs/blobfs.sh@124 -- # rm /tmp/spdk_tmp_mount/rand_file
+ 04:28:39	-- blobfs/blobfs.sh@126 -- # umount /tmp/spdk_tmp_mount
+umount: /tmp/spdk_tmp_mount: target is busy.
+  04:28:39	-- blobfs/blobfs.sh@126 -- # trap - ERR
+  04:28:39	-- blobfs/blobfs.sh@126 -- # print_backtrace
+  04:28:39	-- common/autotest_common.sh@1106 -- # [[ ehxBET =~ e ]]
+  04:28:39	-- common/autotest_common.sh@1108 -- # args=("${BASH_ARGV[@]}")
+  04:28:39	-- common/autotest_common.sh@1108 -- # local args
+  04:28:39	-- common/autotest_common.sh@1110 -- # xtrace_disable
+  04:28:39	-- common/autotest_common.sh@10 -- # set +x
+========== Backtrace start: ==========
+
+in ./test/blobfs/blobfs.sh:126 -> blobfs_fuse_test([])
+     ...
+   121 		gdb -p $blobfs_pid
+   122 		# read and delete the rand file
+   123 		md5sum ${mount_dir}/rand_file
+   124 		rm ${mount_dir}/rand_file
+   125 	
+=> 126 		umount ${mount_dir}
+   127 		sleep 1
+   128 		killprocess $blobfs_pid
+   129 	}
+   130 	
+   131 	trap 'cleanup' EXIT
+     ...
+in ./test/blobfs/blobfs.sh:168 -> main([])
+     ...
+   163 	
+   164 	blobfs_create_test
+   165 	
+   166 	# Create dir for FUSE mount
+   167 	mkdir -p $mount_dir
+=> 168 	blobfs_fuse_test
+     ...
+
+========== Backtrace end ==========
+  04:28:39	-- common/autotest_common.sh@1147 -- # return 0
+ 04:28:39	-- blobfs/blobfs.sh@1 -- # cleanup
+ 04:28:39	-- blobfs/blobfs.sh@25 -- # [[ -n 190753 ]]
+ 04:28:39	-- blobfs/blobfs.sh@25 -- # [[ -e /proc/190753 ]]
+ 04:28:39	-- blobfs/blobfs.sh@26 -- # killprocess 190753
+ 04:28:39	-- common/autotest_common.sh@906 -- # '[' -z 190753 ']'
+ 04:28:39	-- common/autotest_common.sh@910 -- # kill -0 190753
+  04:28:39	-- common/autotest_common.sh@911 -- # uname
+ 04:28:39	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
+  04:28:39	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 190753
+ 04:28:39	-- common/autotest_common.sh@912 -- # process_name=reactor_0
+ 04:28:39	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
+ 04:28:39	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 190753'
+killing process with pid 190753
+ 04:28:39	-- common/autotest_common.sh@925 -- # kill 190753
+ 04:28:39	-- common/autotest_common.sh@930 -- # wait 190753
+[2024-07-08 04:28:39.678884] bdev.c:2282:bdev_finish_unregister_bdevs_iter: *WARNING*: Unregistering claimed bdev 'BlobfsBdev'!
+[2024-07-08 04:28:39.679141] blobfs_bdev.c: 246:blobfs_bdev_fuse_event_cb: *WARNING*: Async event(0) is triggered in bdev BlobfsBdev
+[2024-07-08 04:28:39.683263] blobfs_fuse.c: 247:fuse_loop_new_thread: *NOTICE*: Blobfs on bdev BlobfsBdev unmounted from /tmp/spdk_tmp_mount
+ 04:28:41	-- blobfs/blobfs.sh@29 -- # rm -rf /tmp/spdk_tmp_mount
+ 04:28:41	-- blobfs/blobfs.sh@30 -- # rm -f /home/kilosigh/Documents/spdk/test/blobfs/blobfs_file
+ 04:28:41	-- blobfs/blobfs.sh@31 -- # rm -f /home/kilosigh/Documents/spdk/test/blobfs/config

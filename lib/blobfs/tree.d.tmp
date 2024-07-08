@@ -1,0 +1,29 @@
+tree.o: tree.c /home/kilosigh/Documents/spdk/include/spdk/stdinc.h \
+ /home/kilosigh/Documents/spdk/include/spdk/blobfs.h \
+ /home/kilosigh/Documents/spdk/include/spdk/blob.h \
+ /home/kilosigh/Documents/spdk/include/spdk/assert.h cache_tree.h \
+ /home/kilosigh/Documents/spdk/include/spdk/queue.h \
+ /home/kilosigh/Documents/spdk/include/spdk/queue_extras.h \
+ /home/kilosigh/Documents/spdk/include/spdk/env.h \
+ /home/kilosigh/Documents/spdk/include/spdk/pci_ids.h \
+ /home/kilosigh/Documents/spdk/include/spdk/log.h
+
+/home/kilosigh/Documents/spdk/include/spdk/stdinc.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/blobfs.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/blob.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/assert.h:
+
+cache_tree.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/queue.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/queue_extras.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/env.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/pci_ids.h:
+
+/home/kilosigh/Documents/spdk/include/spdk/log.h:

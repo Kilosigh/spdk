@@ -14,16 +14,13 @@
 
 #include "spdk/blob.h"
 
-#include <linux/module.h>
-#include <linux/fs.h>
 
-struct file *filp;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define SPDK_FILE_NAME_MAX	255
+#define SPDK_FILE_NAME_MAX	256
 #define SPDK_DIR_FILE_MAX	32
 
 struct spdk_file;
@@ -43,12 +40,10 @@ struct dir_entry {
 struct spdk_file_stat {
 	spdk_blob_id	blobid;
 	uint64_t	size;
-    mode_t mode;
-    union {
-        uint64_t file_size;
-        spdk_blob_id dir_children_id;
-    };
-    char data[0];
+	int child_count;
+	struct spdk_file *father;
+	int type;
+	char children_names[SPDK_DIR_FILE_MAX][SPDK_FILE_NAME_MAX];
 };
 
 /**
@@ -220,7 +215,7 @@ int spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *c
 			const char *name);
 
 int
-spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name);
+spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name, int type);
 
 /**
  * Open the file.
@@ -558,6 +553,9 @@ void spdk_file_read_async(struct spdk_file *file, struct spdk_io_channel *channe
  */
 void spdk_file_sync_async(struct spdk_file *file, struct spdk_io_channel *channel,
 			  spdk_file_op_complete cb_fn, void *cb_arg);
+
+struct spdk_file *
+fs_find_file(struct spdk_filesystem *fs, const char *name)
 
 #ifdef __cplusplus
 }

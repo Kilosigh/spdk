@@ -110,7 +110,7 @@ struct spdk_file {
 	TAILQ_HEAD(sync_requests_head, spdk_fs_request) sync_requests;
 	TAILQ_ENTRY(spdk_file)	cache_tailq;
 	struct spdk_file *father;
-	struct spdk_file children[SPDK_DIR_FILE_MAX];
+	struct spdk_file *children[SPDK_DIR_FILE_MAX];
 	int child_count;
 };
 
@@ -896,7 +896,7 @@ spdk_fs_unload(struct spdk_filesystem *fs, spdk_fs_op_complete cb_fn, void *cb_a
 	spdk_bs_unload(fs->bs, unload_cb, req);
 }
 
-static struct spdk_file *
+struct spdk_file *
 fs_find_file(struct spdk_filesystem *fs, const char *name)
 {
 	struct spdk_file *file;
@@ -926,6 +926,15 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 	if (f != NULL) {
 		stat.blobid = f->blobid;
 		stat.size = f->append_pos >= f->length ? f->append_pos : f->length;
+		stat.child_count = f->child_count;
+		stat.father = f->father;
+		stat.type = f->type;
+		for (int c = 0; c < f->child_count; c++){
+			for (int i = 0; i < SPDK_FILE_NAME_MAX; i++){
+				stat.children_names[c][i] = f->children[c]->name[i];
+				if (stat.children_names[c][i] == '\0') break;
+			} 
+		}
 		cb_fn(cb_arg, &stat, 0);
 		return;
 	}
@@ -1153,10 +1162,51 @@ spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, 
 int
 spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name, int type)
 {
-	if (!type) return spdk_fs_create_file(fs, ctx, name);
-	else {
-		
+    struct spdk_file *file, *father_dir;
+	const char *last_slash = strrchr(name, '/');
+	int rc = spdk_fs_create_file(fs, ctx, last_slash + 1);
+	if (!rc) return rc;
+	file = fs_find_file(fs, last_slash + 1);
+	if (!file) return -ENOENT;
+	file->child_count = 0;
+	file->type = type;
+	if (last_slash == name) {
+		// in root dir
+		father_dir = fs_find_file(fs, "/");
+		if (!father_dir) {
+			rc = spdk_fs_create_file(fs, ctx, "/");
+			if (!rc) return rc;
+			father_dir = fs_find_file(fs, "/");
+			if (!father_dir) {
+				printf("Found no root dir!\n");
+				return -ENOENT;
+				}
+			father_dir->father = NULL;
+			father_dir->child_count = 0;
+			father_dir->type = 1;
+		}
+		file->father = father_dir;
+		father_dir->children[(father_dir->child_count)++] = file;
+		return rc;
 	}
+	char father_name[SPDK_FILE_NAME_MAX];
+	while (last_slash >= name && *last_slash != '/') 
+		last_slash--;
+	last_slash++;
+	int c = 0;
+	for (; *last_slash != '/'; c++) {
+		last_slash++;
+		father_name[c] = *last_slash;
+	} father_name[c] = '\0';
+	father_dir = fs_find_file(fs, father_name);
+	if (!father_dir) {
+		printf("Find no father named %s!\n", father_name);
+		return -ENOENT;
+	}
+	file->father = father_dir;
+	file->type = type;
+	father_dir->children[(father_dir->child_count)++] = file;
+	return rc;
 }
 
 

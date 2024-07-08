@@ -71,24 +71,32 @@ fuse_getattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi)
 {
 	struct spdk_file_stat stat;
 	int rc;
-
+	
 	if (!strcmp(path, "/"))
 	{
+		struct spdk_file *file = fs_find_file(thd_bfuse->fs, "/");
 		stbuf->st_mode = S_IFDIR | 0755;
-		stbuf->st_nlink = 2;
+		stbuf->st_nlink = 2 ;
+		if (!file) return 0;
+		rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, "/", &stat);
+		if (!rc) return rc;
+		stbuf->st_nlink += stat.child_count;
 		return 0;
 	}
+	//struct spdk_file *file = fs_find_file(thd_bfuse->fs, strrchr(path, '/') + 1);
 
-
-	rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, path, &stat);
-	if (rc == 0)
-	{
+	rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, strrchr(path, '/') + 1, &stat);
+	if (!rc) return rc;
+	if (!stat.type){
 		stbuf->st_mode = S_IFREG | 0644;
 		stbuf->st_nlink = 1;
 		stbuf->st_size = stat.size;
 	}
-
-	return rc;
+	else {
+		stbuf->st_mode = S_IFDIR | 0755;
+		stbuf->st_nlink = 2 + stat.child_count;
+	}
+	return 0;
 }
 
 static int
@@ -98,8 +106,10 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 {
 	struct spdk_file *file;
 	const char *filename;
-	const char *target = "test_dir";
+	const char *target = strrchr(path, '/') + 1;
 	spdk_fs_iter iter;
+	struct spdk_file_stat stat;
+	int rc;
 	
 	printf("readdir is called in dir %s\n", path);
 
@@ -120,42 +130,23 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		file = spdk_fs_iter_get_file(iter);
 		iter = spdk_fs_iter_next(iter);
 		filename = spdk_file_get_name(file);
-		printf("finding dir %s, now find at %s\n", target, filename);
-		// Get the target dir file.
+		//printf("finding dir %s, now find at %s\n", target, filename);
 		if (!strcmp(target, filename)) break;
 	}
-	
-
+	if (!iter) printf("Found no dir file named %s\n", target);
+	rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, target, &stat);
+	if (!rc) return rc;
+	if (!stat.type) fprintf(stderr, "%s is not a dir!\n", target);
+	for (int c = 0; c < stat.child_count; c++){
+		filler(buf, stat.children_names[c], NULL, 0, 0);
+	}
 	return 0;
 }
 
 static int
 fuse_mknod(const char *path, mode_t mode, dev_t rdev)
 {
-	int rc = spdk_fs_create_file(thd_bfuse->fs, thd_bfuse->channel, path);
-    struct spdk_file *file, *father_dir;
-	const char *last_slash = strrchr(path + 1, '/');
-	file = fs_find_file(thd_bfuse->fs, last_slash + 1);
-	file->child_count = 0;
-	if (!last_slash){ //father is '/'
-		father_dir = fs_find_file(thd_bfuse->fs, "/");
-		file->father = father_dir;
-	}
-	else{
-		char father_name[SPDK_FILE_NAME_MAX];
-		while (last_slash >= path && *last_slash != '/') last_slash--;
-		int c = 0;
-		for (; *last_slash != '/'; c++) {
-			last_slash++;
-			father_name[c] = *last_slash;
-		} father_name[c] = '\0';
-		father_dir = fs_find_file(thd_bfuse->fs, father_name);
-		file->father = father_dir;
-	}
-	father_dir->children[(father_dir->child_count)++] = file;
-	//root_dir = fs_find_file(thd_bfuse->fs, "/");
-
-	return rc;
+	return spdk_fs_fuse_create_file(thd_bfuse->fs, thd_bfuse->channel, path, 0);
 }
 
 static int
@@ -264,8 +255,7 @@ fuse_rename(const char *old_path, const char *new_path, unsigned int flags)
 static int
 fuse_mkdir(const char *path, mode_t mode)
 {
-
-	return 0;
+	return spdk_fs_fuse_create_file(thd_bfuse->fs, thd_bfuse->channel, path, 1);
 }
 
 static int
