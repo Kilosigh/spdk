@@ -14,11 +14,17 @@
 
 #include "spdk/blob.h"
 
+#include <linux/module.h>
+#include <linux/fs.h>
+
+struct file *filp;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define SPDK_FILE_NAME_MAX	255
+#define SPDK_DIR_FILE_MAX	32
 
 struct spdk_file;
 struct spdk_filesystem;
@@ -29,9 +35,20 @@ struct spdk_blobfs_opts {
 	uint32_t	cluster_sz;
 };
 
+struct dir_entry {
+    char filename[SPDK_FILE_NAME_MAX];
+    spdk_blob_id	blobid;
+};
+
 struct spdk_file_stat {
 	spdk_blob_id	blobid;
 	uint64_t	size;
+    mode_t mode;
+    union {
+        uint64_t file_size;
+        spdk_blob_id dir_children_id;
+    };
+    char data[0];
 };
 
 /**
@@ -201,6 +218,9 @@ int spdk_fs_file_stat(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx
  */
 int spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 			const char *name);
+
+int
+spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name);
 
 /**
  * Open the file.

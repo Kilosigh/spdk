@@ -17,6 +17,7 @@
 #include "spdk/trace.h"
 
 #include "spdk_internal/trace_defs.h"
+#include <linux/fs.h>
 
 #define BLOBFS_TRACE(file, str, args...) \
 	SPDK_DEBUGLOG(blobfs, "file=%s " str, file->name, ##args)
@@ -90,8 +91,9 @@ struct spdk_file {
 	struct spdk_blob	*blob;
 	char			*name;
 	uint64_t		length;
-	bool                    is_deleted;
+	bool            is_deleted;
 	bool			open_for_writing;
+	int 			type;
 	uint64_t		length_flushed;
 	uint64_t		length_xattr;
 	uint64_t		append_pos;
@@ -107,6 +109,9 @@ struct spdk_file {
 	TAILQ_HEAD(open_requests_head, spdk_fs_request) open_requests;
 	TAILQ_HEAD(sync_requests_head, spdk_fs_request) sync_requests;
 	TAILQ_ENTRY(spdk_file)	cache_tailq;
+	struct spdk_file *father;
+	struct spdk_file children[SPDK_DIR_FILE_MAX];
+	int child_count;
 };
 
 struct spdk_deleted_file {
@@ -1144,6 +1149,16 @@ spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, 
 
 	return rc;
 }
+
+int
+spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name, int type)
+{
+	if (!type) return spdk_fs_create_file(fs, ctx, name);
+	else {
+		
+	}
+}
+
 
 static void
 fs_open_blob_done(void *ctx, struct spdk_blob *blob, int bserrno)
