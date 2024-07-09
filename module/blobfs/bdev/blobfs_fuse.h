@@ -21,4 +21,5 @@ int blobfs_fuse_start(const char *bdev_name, const char *mountpoint,
 
 void blobfs_fuse_stop(struct spdk_blobfs_fuse *bfuse);
 
+
 #endif /* SPDK_BLOBFS_FUSE_H */

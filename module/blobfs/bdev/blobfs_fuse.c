@@ -18,6 +18,7 @@
 #include "fuse3/fuse.h"
 #include "fuse3/fuse_lowlevel.h"
 
+
 struct spdk_blobfs_fuse
 {
 	char *bdev_name;
@@ -152,7 +153,7 @@ fuse_mknod(const char *path, mode_t mode, dev_t rdev)
 static int
 fuse_unlink(const char *path)
 {
-	return spdk_fs_delete_file(thd_bfuse->fs, thd_bfuse->channel, path);
+	return spdk_fs_fuse_delete_file(thd_bfuse->fs, thd_bfuse->channel, path);
 }
 
 static int
@@ -161,7 +162,7 @@ fuse_truncate(const char *path, off_t size, struct fuse_file_info *fi)
 	struct spdk_file *file;
 	int rc;
 
-	rc = spdk_fs_open_file(thd_bfuse->fs, thd_bfuse->channel, path, 0, &file);
+	rc = spdk_fs_fuse_open_file(thd_bfuse->fs, thd_bfuse->channel, path, 0, &file);
 	if (rc != 0)
 	{
 		return -rc;
@@ -190,7 +191,7 @@ fuse_open(const char *path, struct fuse_file_info *info)
 	struct spdk_file *file;
 	int rc;
 
-	rc = spdk_fs_open_file(thd_bfuse->fs, thd_bfuse->channel, path, 0, &file);
+	rc = spdk_fs_fuse_open_file(thd_bfuse->fs, thd_bfuse->channel, path, 0, &file);
 	if (rc != 0)
 	{
 		return -rc;
@@ -259,10 +260,10 @@ fuse_mkdir(const char *path, mode_t mode)
 }
 
 static int
-fuse_rmdir(const char *name)
+fuse_rmdir(const char *path)
 {
-
-	return 0;
+	return spdk_fs_fuse_delete_file(thd_bfuse->fs, thd_bfuse->channel, path);
+	//return 0;
 }
 
 static struct fuse_operations spdk_fuse_oper = {

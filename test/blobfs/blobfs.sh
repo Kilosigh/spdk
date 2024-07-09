@@ -101,7 +101,8 @@ function blobfs_fuse_test() {
 
 	# check mount status
 	mount | grep "$mount_dir"
-
+	
+	gdb -p $blobfs_pid
 	# create a rand file in mount dir
 	dd if=/dev/urandom of=${mount_dir}/rand_file bs=4k count=1k
 

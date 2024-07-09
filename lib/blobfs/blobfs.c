@@ -227,6 +227,31 @@ static void file_free(struct spdk_file *file);
 static void fs_io_device_unregister(struct spdk_filesystem *fs);
 static void fs_free_io_channels(struct spdk_filesystem *fs);
 
+int path_parser(const char *path, char *father_name, char *file_name){
+	const char *last_slash = strrchr(path, '/');
+	const char *p = last_slash;
+	int c = 0;
+	// file_name fill
+	for (; *p != '\0'; c++) {
+		p++;
+		file_name[c] = *p;
+	} 
+	if (!father_name)  return 0;
+	if (last_slash == path) {//root dir
+		strncpy(father_name, "/", 2);
+	}
+	else{
+		while (last_slash >= path && *last_slash != '/') 
+			last_slash--;
+		last_slash++;
+		for (c = 0; *last_slash != '/'; c++) {
+			last_slash++;
+			father_name[c] = *last_slash;
+		} father_name[c-1] = '\0';
+	}
+	return 0;
+}
+
 void
 spdk_fs_opts_init(struct spdk_blobfs_opts *opts)
 {
@@ -927,7 +952,7 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 		stat.blobid = f->blobid;
 		stat.size = f->append_pos >= f->length ? f->append_pos : f->length;
 		stat.child_count = f->child_count;
-		stat.father = f->father;
+		strcpy(stat.father_name, f->father->name);
 		stat.type = f->type;
 		for (int c = 0; c < f->child_count; c++){
 			for (int i = 0; i < SPDK_FILE_NAME_MAX; i++){
@@ -1163,14 +1188,17 @@ int
 spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name, int type)
 {
     struct spdk_file *file, *father_dir;
-	const char *last_slash = strrchr(name, '/');
-	int rc = spdk_fs_create_file(fs, ctx, last_slash + 1);
+	char file_name[SPDK_FILE_NAME_MAX];
+	char father_name[SPDK_FILE_NAME_MAX];
+	int rc = path_parser(name, father_name, file_name);
 	if (!rc) return rc;
-	file = fs_find_file(fs, last_slash + 1);
+	rc = spdk_fs_create_file(fs, ctx, file_name);
+	if (!rc) return rc;
+	file = fs_find_file(fs, file_name);
 	if (!file) return -ENOENT;
 	file->child_count = 0;
 	file->type = type;
-	if (last_slash == name) {
+	if (!strcmp(father_name, "/")) {
 		// in root dir
 		father_dir = fs_find_file(fs, "/");
 		if (!father_dir) {
@@ -1180,7 +1208,7 @@ spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
 			if (!father_dir) {
 				printf("Found no root dir!\n");
 				return -ENOENT;
-				}
+			}
 			father_dir->father = NULL;
 			father_dir->child_count = 0;
 			father_dir->type = 1;
@@ -1189,15 +1217,6 @@ spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
 		father_dir->children[(father_dir->child_count)++] = file;
 		return rc;
 	}
-	char father_name[SPDK_FILE_NAME_MAX];
-	while (last_slash >= name && *last_slash != '/') 
-		last_slash--;
-	last_slash++;
-	int c = 0;
-	for (; *last_slash != '/'; c++) {
-		last_slash++;
-		father_name[c] = *last_slash;
-	} father_name[c] = '\0';
 	father_dir = fs_find_file(fs, father_name);
 	if (!father_dir) {
 		printf("Find no father named %s!\n", father_name);
@@ -1362,6 +1381,17 @@ spdk_fs_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 	}
 	free_fs_request(req);
 
+	return rc;
+}
+
+int
+spdk_fs_fuse_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
+		  const char *name, uint32_t flags, struct spdk_file **file)
+{
+	char file_name[SPDK_FILE_NAME_MAX];
+	int rc = path_parser(name, NULL, file_name);
+	if (!rc) return rc;
+	rc = spdk_fs_open_file(fs, ctx, file_name, flags, file);
 	return rc;
 }
 
@@ -1615,6 +1645,24 @@ spdk_fs_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 	return rc;
 }
 
+int
+spdk_fs_fuse_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
+		    const char *name)
+{
+	char file_name[SPDK_FILE_NAME_MAX];
+	struct spdk_file *file, *father_dir;
+	int rc = path_parser(name, NULL, file_name);
+	if (!rc) return rc;
+	file = fs_find_file(fs, file_name);
+	if (!file) return -ENOENT;
+	if (file->child_count != 0) return -ENOTEMPTY;
+	father_dir = file->father;
+	rc = spdk_fs_delete_file(fs, ctx, file_name);
+	// sync problem
+	father_dir->child_count--;
+	return 0;
+}
+
 spdk_fs_iter
 spdk_fs_iter_first(struct spdk_filesystem *fs)
 {
@@ -1766,6 +1814,7 @@ spdk_file_truncate(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 
 	return rc;
 }
+
 
 static void
 __rw_done(void *ctx, int bserrno)
@@ -2753,6 +2802,14 @@ spdk_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 		return arg.rwerrno;
 	}
 }
+
+int64_t spdk_fuse_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
+		       void *payload, uint64_t offset, uint64_t length)
+{
+	int rc = spdk_file_read(file, ctx, payload, offset, length);
+	return rc;
+}
+
 
 static void
 _file_sync(struct spdk_file *file, struct spdk_fs_channel *channel,
