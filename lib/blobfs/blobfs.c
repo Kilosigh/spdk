@@ -93,7 +93,7 @@ struct spdk_file {
 	uint64_t		length;
 	bool            is_deleted;
 	bool			open_for_writing;
-	bool			is_dir;
+	int 			type;
 	uint64_t		length_flushed;
 	uint64_t		length_xattr;
 	uint64_t		append_pos;
@@ -110,7 +110,7 @@ struct spdk_file {
 	TAILQ_HEAD(sync_requests_head, spdk_fs_request) sync_requests;
 	TAILQ_ENTRY(spdk_file)	cache_tailq;
 	struct spdk_file *father;
-	struct spdk_file children[SPDK_DIR_FILE_MAX];
+	struct spdk_file *children[SPDK_DIR_FILE_MAX];
 	int child_count;
 };
 
@@ -226,6 +226,31 @@ struct spdk_fs_cb_args {
 static void file_free(struct spdk_file *file);
 static void fs_io_device_unregister(struct spdk_filesystem *fs);
 static void fs_free_io_channels(struct spdk_filesystem *fs);
+
+int path_parser(const char *path, char *father_name, char *file_name){
+	const char *last_slash = strrchr(path, '/');
+	const char *p = last_slash;
+	int c = 0;
+	// file_name fill
+	for (; *p != '\0'; c++) {
+		p++;
+		file_name[c] = *p;
+	} 
+	if (!father_name)  return 0;
+	if (last_slash == path) {//root dir
+		strncpy(father_name, "/", 2);
+	}
+	else{
+		while (last_slash >= path && *last_slash != '/') 
+			last_slash--;
+		last_slash++;
+		for (c = 0; *last_slash != '/'; c++) {
+			last_slash++;
+			father_name[c] = *last_slash;
+		} father_name[c-1] = '\0';
+	}
+	return 0;
+}
 
 void
 spdk_fs_opts_init(struct spdk_blobfs_opts *opts)
@@ -896,7 +921,7 @@ spdk_fs_unload(struct spdk_filesystem *fs, spdk_fs_op_complete cb_fn, void *cb_a
 	spdk_bs_unload(fs->bs, unload_cb, req);
 }
 
-static struct spdk_file *
+struct spdk_file *
 fs_find_file(struct spdk_filesystem *fs, const char *name)
 {
 	struct spdk_file *file;
@@ -926,6 +951,15 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 	if (f != NULL) {
 		stat.blobid = f->blobid;
 		stat.size = f->append_pos >= f->length ? f->append_pos : f->length;
+		stat.child_count = f->child_count;
+		strcpy(stat.father_name, f->father->name);
+		stat.type = f->type;
+		for (int c = 0; c < f->child_count; c++){
+			for (int i = 0; i < SPDK_FILE_NAME_MAX; i++){
+				stat.children_names[c][i] = f->children[c]->name[i];
+				if (stat.children_names[c][i] == '\0') break;
+			} 
+		}
 		cb_fn(cb_arg, &stat, 0);
 		return;
 	}
@@ -1151,32 +1185,49 @@ spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, 
 }
 
 int
-spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name)
+spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name, int type)
 {
-	struct spdk_fs_channel *channel = (struct spdk_fs_channel *)ctx;
-	struct spdk_fs_request *req;
-	struct spdk_fs_cb_args *args;
-	int rc;
-
-	SPDK_DEBUGLOG(blobfs, "file=%s\n", name);
-
-	req = alloc_fs_request(channel);
-	if (req == NULL) {
-		SPDK_ERRLOG("Cannot allocate req to create file=%s\n", name);
-		return -ENOMEM;
+    struct spdk_file *file, *father_dir;
+	char file_name[SPDK_FILE_NAME_MAX];
+	char father_name[SPDK_FILE_NAME_MAX];
+	int rc = path_parser(name, father_name, file_name);
+	if (!rc) return rc;
+	rc = spdk_fs_create_file(fs, ctx, file_name);
+	if (!rc) return rc;
+	file = fs_find_file(fs, file_name);
+	if (!file) return -ENOENT;
+	file->child_count = 0;
+	file->type = type;
+	if (!strcmp(father_name, "/")) {
+		// in root dir
+		father_dir = fs_find_file(fs, "/");
+		if (!father_dir) {
+			rc = spdk_fs_create_file(fs, ctx, "/");
+			if (!rc) return rc;
+			father_dir = fs_find_file(fs, "/");
+			if (!father_dir) {
+				printf("Found no root dir!\n");
+				return -ENOENT;
+			}
+			father_dir->father = NULL;
+			father_dir->child_count = 0;
+			father_dir->type = 1;
+		}
+		file->father = father_dir;
+		father_dir->children[(father_dir->child_count)++] = file;
+		return rc;
 	}
-
-	args = &req->args;
-	args->fs = fs;
-	args->op.create.name = name;
-	args->sem = &channel->sem;
-	fs->send_request(__fs_create_file, req);
-	sem_wait(&channel->sem);
-	rc = args->rc;
-	free_fs_request(req);
-
+	father_dir = fs_find_file(fs, father_name);
+	if (!father_dir) {
+		printf("Find no father named %s!\n", father_name);
+		return -ENOENT;
+	}
+	file->father = father_dir;
+	file->type = type;
+	father_dir->children[(father_dir->child_count)++] = file;
 	return rc;
 }
+
 
 static void
 fs_open_blob_done(void *ctx, struct spdk_blob *blob, int bserrno)
@@ -1330,6 +1381,17 @@ spdk_fs_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 	}
 	free_fs_request(req);
 
+	return rc;
+}
+
+int
+spdk_fs_fuse_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
+		  const char *name, uint32_t flags, struct spdk_file **file)
+{
+	char file_name[SPDK_FILE_NAME_MAX];
+	int rc = path_parser(name, NULL, file_name);
+	if (!rc) return rc;
+	rc = spdk_fs_open_file(fs, ctx, file_name, flags, file);
 	return rc;
 }
 
@@ -1583,6 +1645,24 @@ spdk_fs_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 	return rc;
 }
 
+int
+spdk_fs_fuse_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
+		    const char *name)
+{
+	char file_name[SPDK_FILE_NAME_MAX];
+	struct spdk_file *file, *father_dir;
+	int rc = path_parser(name, NULL, file_name);
+	if (!rc) return rc;
+	file = fs_find_file(fs, file_name);
+	if (!file) return -ENOENT;
+	if (file->child_count != 0) return -ENOTEMPTY;
+	father_dir = file->father;
+	rc = spdk_fs_delete_file(fs, ctx, file_name);
+	// sync problem
+	father_dir->child_count--;
+	return 0;
+}
+
 spdk_fs_iter
 spdk_fs_iter_first(struct spdk_filesystem *fs)
 {
@@ -1734,6 +1814,7 @@ spdk_file_truncate(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 
 	return rc;
 }
+
 
 static void
 __rw_done(void *ctx, int bserrno)
@@ -2721,6 +2802,14 @@ spdk_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 		return arg.rwerrno;
 	}
 }
+
+int64_t spdk_fuse_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
+		       void *payload, uint64_t offset, uint64_t length)
+{
+	int rc = spdk_file_read(file, ctx, payload, offset, length);
+	return rc;
+}
+
 
 static void
 _file_sync(struct spdk_file *file, struct spdk_fs_channel *channel,

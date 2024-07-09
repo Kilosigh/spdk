@@ -14,10 +14,7 @@
 
 #include "spdk/blob.h"
 
-#include <linux/module.h>
-#include <linux/fs.h>
 
-struct file *filp;
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,12 +40,10 @@ struct dir_entry {
 struct spdk_file_stat {
 	spdk_blob_id	blobid;
 	uint64_t	size;
-    mode_t mode;
-    union {
-        uint64_t file_size;
-        spdk_blob_id dir_children_id;
-    };
-    char data[0];
+	int child_count;
+	char father_name[SPDK_FILE_NAME_MAX];
+	int type;
+	char children_names[SPDK_DIR_FILE_MAX][SPDK_FILE_NAME_MAX];
 };
 
 /**
@@ -111,6 +106,9 @@ typedef void (*fs_send_request_fn)(fs_request_fn fn, void *arg);
  *
  * \param opts spdk_blobf_opts structure to initialize.
  */
+
+int path_parser(const char *path, char *father_name, char *file_name);
+
 void spdk_fs_opts_init(struct spdk_blobfs_opts *opts);
 
 /**
@@ -220,7 +218,7 @@ int spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *c
 			const char *name);
 
 int
-spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name);
+spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name, int type);
 
 /**
  * Open the file.
@@ -235,6 +233,10 @@ spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
  */
 int spdk_fs_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 		      const char *name, uint32_t flags, struct spdk_file **file);
+
+int
+spdk_fs_fuse_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
+		  	const char *name, uint32_t flags, struct spdk_file **file);
 
 /**
  * Close the file.
@@ -274,6 +276,10 @@ int spdk_fs_rename_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *c
 int spdk_fs_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
 			const char *name);
 
+int
+spdk_fs_fuse_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx,
+		    const char *name);
+
 /**
  * Get the first file in the blobstore filesystem.
  *
@@ -305,6 +311,7 @@ spdk_fs_iter spdk_fs_iter_next(spdk_fs_iter iter);
  */
 int spdk_file_truncate(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 		       uint64_t length);
+
 
 /**
  * Get file name.
@@ -351,6 +358,7 @@ int spdk_file_write(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
  */
 int64_t spdk_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 		       void *payload, uint64_t offset, uint64_t length);
+
 
 /**
  * Set cache size for the blobstore filesystem.
@@ -558,6 +566,8 @@ void spdk_file_read_async(struct spdk_file *file, struct spdk_io_channel *channe
  */
 void spdk_file_sync_async(struct spdk_file *file, struct spdk_io_channel *channel,
 			  spdk_file_op_complete cb_fn, void *cb_arg);
+
+struct spdk_file * fs_find_file(struct spdk_filesystem *fs, const char *name);
 
 #ifdef __cplusplus
 }
