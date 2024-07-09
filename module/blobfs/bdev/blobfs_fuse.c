@@ -265,7 +265,7 @@ fuse_rmdir(const char *path)
 	return spdk_fs_fuse_delete_file(thd_bfuse->fs, thd_bfuse->channel, path);
 	//return 0;
 }
-
+//
 static struct fuse_operations spdk_fuse_oper = {
 	.getattr = fuse_getattr,
 	.readdir = fuse_readdir,
