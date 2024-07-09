@@ -103,7 +103,7 @@ function blobfs_fuse_test() {
 	mount | grep "$mount_dir"
 
 	# create a rand file in mount dir
-	dd if=/dev/urandom of=${mount_dir}/rand_file bs=4k count=32
+	dd if=/dev/urandom of=${mount_dir}/rand_file bs=4k count=1k
 
 	umount ${mount_dir}
 	sleep 1
@@ -117,7 +117,8 @@ function blobfs_fuse_test() {
 	# use blobfs mount RPC
 	blobfs_start_app
 	$rpc_py blobfs_mount ${bdevname} $mount_dir
-
+        
+	gdb -p $blobfs_pid
 	# read and delete the rand file
 	md5sum ${mount_dir}/rand_file
 	rm ${mount_dir}/rand_file
@@ -130,7 +131,7 @@ function blobfs_fuse_test() {
 trap 'cleanup' EXIT
 
 # Create one temp file as test bdev
-dd if=/dev/zero of=${tmp_file} bs=4k count=1M
+dd if=/dev/zero of=${tmp_file} bs=4k count=2k
 
 jq . <<- JSON > ${conf_file}
 	{
@@ -158,7 +159,7 @@ JSON
 blobfs_detect_test
 
 # Clear blobfs on temp file
-dd if=/dev/zero of=${tmp_file} bs=4k count=1M
+dd if=/dev/zero of=${tmp_file} bs=4k count=2k
 
 blobfs_create_test
 

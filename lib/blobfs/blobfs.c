@@ -17,6 +17,7 @@
 #include "spdk/trace.h"
 
 #include "spdk_internal/trace_defs.h"
+#include <linux/fs.h>
 
 #define BLOBFS_TRACE(file, str, args...) \
 	SPDK_DEBUGLOG(blobfs, "file=%s " str, file->name, ##args)
@@ -90,8 +91,9 @@ struct spdk_file {
 	struct spdk_blob	*blob;
 	char			*name;
 	uint64_t		length;
-	bool                    is_deleted;
+	bool            is_deleted;
 	bool			open_for_writing;
+	bool			is_dir;
 	uint64_t		length_flushed;
 	uint64_t		length_xattr;
 	uint64_t		append_pos;
@@ -107,6 +109,9 @@ struct spdk_file {
 	TAILQ_HEAD(open_requests_head, spdk_fs_request) open_requests;
 	TAILQ_HEAD(sync_requests_head, spdk_fs_request) sync_requests;
 	TAILQ_ENTRY(spdk_file)	cache_tailq;
+	struct spdk_file *father;
+	struct spdk_file children[SPDK_DIR_FILE_MAX];
+	int child_count;
 };
 
 struct spdk_deleted_file {
@@ -1119,6 +1124,34 @@ __fs_create_file(void *arg)
 
 int
 spdk_fs_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name)
+{
+	struct spdk_fs_channel *channel = (struct spdk_fs_channel *)ctx;
+	struct spdk_fs_request *req;
+	struct spdk_fs_cb_args *args;
+	int rc;
+
+	SPDK_DEBUGLOG(blobfs, "file=%s\n", name);
+
+	req = alloc_fs_request(channel);
+	if (req == NULL) {
+		SPDK_ERRLOG("Cannot allocate req to create file=%s\n", name);
+		return -ENOMEM;
+	}
+
+	args = &req->args;
+	args->fs = fs;
+	args->op.create.name = name;
+	args->sem = &channel->sem;
+	fs->send_request(__fs_create_file, req);
+	sem_wait(&channel->sem);
+	rc = args->rc;
+	free_fs_request(req);
+
+	return rc;
+}
+
+int
+spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ctx, const char *name)
 {
 	struct spdk_fs_channel *channel = (struct spdk_fs_channel *)ctx;
 	struct spdk_fs_request *req;
