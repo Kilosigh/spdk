@@ -1,225 +1,178 @@
 * Looking for test storage...
 * Found test storage at /home/kilosigh/Documents/spdk/test/blobfs
- 01:54:52	-- blobfs/blobfs.sh@16 -- # rpc_server=/var/tmp/spdk-blobfs.sock
- 01:54:52	-- blobfs/blobfs.sh@17 -- # rpc_py='/home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock'
- 01:54:52	-- blobfs/blobfs.sh@18 -- # tmp_file=/home/kilosigh/Documents/spdk/test/blobfs/blobfs_file
- 01:54:52	-- blobfs/blobfs.sh@19 -- # conf_file=/home/kilosigh/Documents/spdk/test/blobfs/config
- 01:54:52	-- blobfs/blobfs.sh@20 -- # bdevname=BlobfsBdev
- 01:54:52	-- blobfs/blobfs.sh@21 -- # mount_dir=/tmp/spdk_tmp_mount
- 01:54:52	-- blobfs/blobfs.sh@22 -- # test_cache_size=512
- 01:54:52	-- blobfs/blobfs.sh@131 -- # trap cleanup EXIT
- 01:54:52	-- blobfs/blobfs.sh@134 -- # dd if=/dev/zero of=/home/kilosigh/Documents/spdk/test/blobfs/blobfs_file bs=4k count=2k
+ 07:05:21	-- blobfs/blobfs.sh@16 -- # rpc_server=/var/tmp/spdk-blobfs.sock
+ 07:05:21	-- blobfs/blobfs.sh@17 -- # rpc_py='/home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock'
+ 07:05:21	-- blobfs/blobfs.sh@18 -- # tmp_file=/home/kilosigh/Documents/spdk/test/blobfs/blobfs_file
+ 07:05:21	-- blobfs/blobfs.sh@19 -- # conf_file=/home/kilosigh/Documents/spdk/test/blobfs/config
+ 07:05:21	-- blobfs/blobfs.sh@20 -- # bdevname=BlobfsBdev
+ 07:05:21	-- blobfs/blobfs.sh@21 -- # mount_dir=/tmp/spdk_tmp_mount
+ 07:05:21	-- blobfs/blobfs.sh@22 -- # test_cache_size=512
+ 07:05:21	-- blobfs/blobfs.sh@133 -- # trap cleanup EXIT
+ 07:05:21	-- blobfs/blobfs.sh@136 -- # dd if=/dev/zero of=/home/kilosigh/Documents/spdk/test/blobfs/blobfs_file bs=4k count=2k
 2048+0 records in
 2048+0 records out
-8388608 bytes (8.4 MB, 8.0 MiB) copied, 0.0229362 s, 366 MB/s
- 01:54:52	-- blobfs/blobfs.sh@136 -- # jq .
- 01:54:52	-- blobfs/blobfs.sh@159 -- # blobfs_detect_test
- 01:54:52	-- blobfs/blobfs.sh@49 -- # blobfs_start_app
- 01:54:52	-- blobfs/blobfs.sh@36 -- # blobfs_pid=192719
- 01:54:52	-- blobfs/blobfs.sh@38 -- # echo 'Process blobfs pid: 192719'
-Process blobfs pid: 192719
- 01:54:52	-- blobfs/blobfs.sh@39 -- # waitforlisten 192719 /var/tmp/spdk-blobfs.sock
- 01:54:52	-- common/autotest_common.sh@799 -- # '[' -z 192719 ']'
- 01:54:52	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
- 01:54:52	-- blobfs/blobfs.sh@35 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
- 01:54:52	-- common/autotest_common.sh@804 -- # local max_retries=100
- 01:54:52	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
+8388608 bytes (8.4 MB, 8.0 MiB) copied, 0.0283371 s, 296 MB/s
+ 07:05:21	-- blobfs/blobfs.sh@138 -- # jq .
+ 07:05:21	-- blobfs/blobfs.sh@161 -- # blobfs_detect_test
+ 07:05:21	-- blobfs/blobfs.sh@50 -- # blobfs_start_app
+ 07:05:21	-- blobfs/blobfs.sh@37 -- # blobfs_pid=493158
+ 07:05:21	-- blobfs/blobfs.sh@39 -- # echo 'Process blobfs pid: 493158'
+Process blobfs pid: 493158
+ 07:05:21	-- blobfs/blobfs.sh@40 -- # waitforlisten 493158 /var/tmp/spdk-blobfs.sock
+ 07:05:21	-- common/autotest_common.sh@799 -- # '[' -z 493158 ']'
+ 07:05:21	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
+ 07:05:21	-- common/autotest_common.sh@804 -- # local max_retries=100
+ 07:05:21	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
 Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...
- 01:54:52	-- common/autotest_common.sh@808 -- # xtrace_disable
- 01:54:52	-- common/autotest_common.sh@10 -- # set +x
-[2024-07-09 01:54:52.489724] Starting SPDK v23.09 git sha1 fb13eebf5 / DPDK 23.07.0 initialization...
-[2024-07-09 01:54:52.489897] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid192719 ]
+ 07:05:21	-- common/autotest_common.sh@808 -- # xtrace_disable
+ 07:05:21	-- common/autotest_common.sh@10 -- # set +x
+ 07:05:21	-- blobfs/blobfs.sh@36 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
+[2024-07-09 07:05:21.551008] Starting SPDK v23.09 git sha1 900514b48 / DPDK 23.07.0 initialization...
+[2024-07-09 07:05:21.551788] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid493158 ]
 TELEMETRY: No legacy callbacks, legacy socket not created
-[2024-07-09 01:54:52.547471] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
-[2024-07-09 01:54:52.577553] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
- 01:54:53	-- common/autotest_common.sh@828 -- # (( i == 0 ))
- 01:54:53	-- common/autotest_common.sh@832 -- # return 0
-  01:54:53	-- blobfs/blobfs.sh@41 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
- 01:54:53	-- blobfs/blobfs.sh@41 -- # result=True
- 01:54:53	-- blobfs/blobfs.sh@42 -- # '[' True '!=' True ']'
-  01:54:53	-- blobfs/blobfs.sh@50 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_detect BlobfsBdev
- 01:54:53	-- blobfs/blobfs.sh@50 -- # result=False
- 01:54:53	-- blobfs/blobfs.sh@51 -- # '[' False '!=' False ']'
- 01:54:53	-- blobfs/blobfs.sh@55 -- # killprocess 192719
- 01:54:53	-- common/autotest_common.sh@906 -- # '[' -z 192719 ']'
- 01:54:53	-- common/autotest_common.sh@910 -- # kill -0 192719
-  01:54:53	-- common/autotest_common.sh@911 -- # uname
- 01:54:53	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
-  01:54:53	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 192719
- 01:54:53	-- common/autotest_common.sh@912 -- # process_name=reactor_0
- 01:54:53	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
- 01:54:53	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 192719'
-killing process with pid 192719
- 01:54:53	-- common/autotest_common.sh@925 -- # kill 192719
- 01:54:53	-- common/autotest_common.sh@930 -- # wait 192719
- 01:54:53	-- blobfs/blobfs.sh@58 -- # /home/kilosigh/Documents/spdk/test/blobfs/mkfs/mkfs /home/kilosigh/Documents/spdk/test/blobfs/config BlobfsBdev
-[2024-07-09 01:54:53.920812] Starting SPDK v23.09 git sha1 fb13eebf5 / DPDK 23.07.0 initialization...
-[2024-07-09 01:54:53.920959] [ DPDK EAL parameters: spdk_mkfs --no-shconf -c 0x3 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid192733 ]
+[2024-07-09 07:05:21.606253] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
+[2024-07-09 07:05:21.628414] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
+ 07:05:22	-- common/autotest_common.sh@828 -- # (( i == 0 ))
+ 07:05:22	-- common/autotest_common.sh@832 -- # return 0
+  07:05:22	-- blobfs/blobfs.sh@42 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
+ 07:05:22	-- blobfs/blobfs.sh@42 -- # result=True
+ 07:05:22	-- blobfs/blobfs.sh@43 -- # '[' True '!=' True ']'
+  07:05:22	-- blobfs/blobfs.sh@51 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_detect BlobfsBdev
+ 07:05:22	-- blobfs/blobfs.sh@51 -- # result=False
+ 07:05:22	-- blobfs/blobfs.sh@52 -- # '[' False '!=' False ']'
+ 07:05:22	-- blobfs/blobfs.sh@56 -- # killprocess 493158
+ 07:05:22	-- common/autotest_common.sh@906 -- # '[' -z 493158 ']'
+ 07:05:22	-- common/autotest_common.sh@910 -- # kill -0 493158
+  07:05:22	-- common/autotest_common.sh@911 -- # uname
+ 07:05:22	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
+  07:05:22	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 493158
+ 07:05:22	-- common/autotest_common.sh@912 -- # process_name=reactor_0
+ 07:05:22	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
+ 07:05:22	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 493158'
+killing process with pid 493158
+ 07:05:22	-- common/autotest_common.sh@925 -- # kill 493158
+ 07:05:22	-- common/autotest_common.sh@930 -- # wait 493158
+ 07:05:22	-- blobfs/blobfs.sh@59 -- # /home/kilosigh/Documents/spdk/test/blobfs/mkfs/mkfs /home/kilosigh/Documents/spdk/test/blobfs/config BlobfsBdev
+[2024-07-09 07:05:23.007462] Starting SPDK v23.09 git sha1 900514b48 / DPDK 23.07.0 initialization...
+[2024-07-09 07:05:23.007688] [ DPDK EAL parameters: spdk_mkfs --no-shconf -c 0x3 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid493172 ]
 TELEMETRY: No legacy callbacks, legacy socket not created
-[2024-07-09 01:54:53.975720] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 2
-[2024-07-09 01:54:54.000194] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 1
-[2024-07-09 01:54:54.000266] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
+[2024-07-09 07:05:23.062468] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 2
+[2024-07-09 07:05:23.084284] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 1
+[2024-07-09 07:05:23.084322] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
 Initializing filesystem on bdev BlobfsBdev...done.
- 01:54:54	-- blobfs/blobfs.sh@61 -- # blobfs_start_app
- 01:54:54	-- blobfs/blobfs.sh@36 -- # blobfs_pid=192738
- 01:54:54	-- blobfs/blobfs.sh@38 -- # echo 'Process blobfs pid: 192738'
-Process blobfs pid: 192738
- 01:54:54	-- blobfs/blobfs.sh@39 -- # waitforlisten 192738 /var/tmp/spdk-blobfs.sock
- 01:54:54	-- common/autotest_common.sh@799 -- # '[' -z 192738 ']'
- 01:54:54	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
- 01:54:54	-- common/autotest_common.sh@804 -- # local max_retries=100
- 01:54:54	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
+ 07:05:23	-- blobfs/blobfs.sh@62 -- # blobfs_start_app
+ 07:05:23	-- blobfs/blobfs.sh@37 -- # blobfs_pid=493176
+ 07:05:23	-- blobfs/blobfs.sh@39 -- # echo 'Process blobfs pid: 493176'
+Process blobfs pid: 493176
+ 07:05:23	-- blobfs/blobfs.sh@40 -- # waitforlisten 493176 /var/tmp/spdk-blobfs.sock
+ 07:05:23	-- common/autotest_common.sh@799 -- # '[' -z 493176 ']'
+ 07:05:23	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
+ 07:05:23	-- common/autotest_common.sh@804 -- # local max_retries=100
+ 07:05:23	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
 Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...
- 01:54:54	-- common/autotest_common.sh@808 -- # xtrace_disable
- 01:54:54	-- common/autotest_common.sh@10 -- # set +x
- 01:54:54	-- blobfs/blobfs.sh@35 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
-[2024-07-09 01:54:54.446065] Starting SPDK v23.09 git sha1 fb13eebf5 / DPDK 23.07.0 initialization...
-[2024-07-09 01:54:54.446208] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid192738 ]
+ 07:05:23	-- blobfs/blobfs.sh@36 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
+ 07:05:23	-- common/autotest_common.sh@808 -- # xtrace_disable
+ 07:05:23	-- common/autotest_common.sh@10 -- # set +x
+[2024-07-09 07:05:23.584236] Starting SPDK v23.09 git sha1 900514b48 / DPDK 23.07.0 initialization...
+[2024-07-09 07:05:23.584381] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid493176 ]
 TELEMETRY: No legacy callbacks, legacy socket not created
-[2024-07-09 01:54:54.500444] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
-[2024-07-09 01:54:54.522661] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
- 01:54:55	-- common/autotest_common.sh@828 -- # (( i == 0 ))
- 01:54:55	-- common/autotest_common.sh@832 -- # return 0
-  01:54:55	-- blobfs/blobfs.sh@41 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
- 01:54:55	-- blobfs/blobfs.sh@41 -- # result=True
- 01:54:55	-- blobfs/blobfs.sh@42 -- # '[' True '!=' True ']'
-  01:54:55	-- blobfs/blobfs.sh@62 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_detect BlobfsBdev
- 01:54:55	-- blobfs/blobfs.sh@62 -- # result=True
- 01:54:55	-- blobfs/blobfs.sh@63 -- # '[' True '!=' True ']'
- 01:54:55	-- blobfs/blobfs.sh@67 -- # killprocess 192738
- 01:54:55	-- common/autotest_common.sh@906 -- # '[' -z 192738 ']'
- 01:54:55	-- common/autotest_common.sh@910 -- # kill -0 192738
-  01:54:55	-- common/autotest_common.sh@911 -- # uname
- 01:54:55	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
-  01:54:55	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 192738
- 01:54:55	-- common/autotest_common.sh@912 -- # process_name=reactor_0
- 01:54:55	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
- 01:54:55	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 192738'
-killing process with pid 192738
- 01:54:55	-- common/autotest_common.sh@925 -- # kill 192738
- 01:54:55	-- common/autotest_common.sh@930 -- # wait 192738
- 01:54:56	-- blobfs/blobfs.sh@162 -- # dd if=/dev/zero of=/home/kilosigh/Documents/spdk/test/blobfs/blobfs_file bs=4k count=2k
+[2024-07-09 07:05:23.637116] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
+[2024-07-09 07:05:23.659022] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
+ 07:05:23	-- common/autotest_common.sh@828 -- # (( i == 0 ))
+ 07:05:23	-- common/autotest_common.sh@832 -- # return 0
+  07:05:23	-- blobfs/blobfs.sh@42 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
+ 07:05:23	-- blobfs/blobfs.sh@42 -- # result=True
+ 07:05:23	-- blobfs/blobfs.sh@43 -- # '[' True '!=' True ']'
+  07:05:23	-- blobfs/blobfs.sh@63 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_detect BlobfsBdev
+ 07:05:24	-- blobfs/blobfs.sh@63 -- # result=True
+ 07:05:24	-- blobfs/blobfs.sh@64 -- # '[' True '!=' True ']'
+ 07:05:24	-- blobfs/blobfs.sh@68 -- # killprocess 493176
+ 07:05:24	-- common/autotest_common.sh@906 -- # '[' -z 493176 ']'
+ 07:05:24	-- common/autotest_common.sh@910 -- # kill -0 493176
+  07:05:24	-- common/autotest_common.sh@911 -- # uname
+ 07:05:24	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
+  07:05:24	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 493176
+ 07:05:24	-- common/autotest_common.sh@912 -- # process_name=reactor_0
+ 07:05:24	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
+ 07:05:24	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 493176'
+killing process with pid 493176
+ 07:05:24	-- common/autotest_common.sh@925 -- # kill 493176
+ 07:05:24	-- common/autotest_common.sh@930 -- # wait 493176
+ 07:05:24	-- blobfs/blobfs.sh@164 -- # dd if=/dev/zero of=/home/kilosigh/Documents/spdk/test/blobfs/blobfs_file bs=4k count=2k
 2048+0 records in
 2048+0 records out
-8388608 bytes (8.4 MB, 8.0 MiB) copied, 0.0268438 s, 312 MB/s
- 01:54:56	-- blobfs/blobfs.sh@164 -- # blobfs_create_test
- 01:54:56	-- blobfs/blobfs.sh@71 -- # blobfs_start_app
- 01:54:56	-- blobfs/blobfs.sh@36 -- # blobfs_pid=192753
- 01:54:56	-- blobfs/blobfs.sh@38 -- # echo 'Process blobfs pid: 192753'
-Process blobfs pid: 192753
- 01:54:56	-- blobfs/blobfs.sh@39 -- # waitforlisten 192753 /var/tmp/spdk-blobfs.sock
- 01:54:56	-- common/autotest_common.sh@799 -- # '[' -z 192753 ']'
- 01:54:56	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
- 01:54:56	-- common/autotest_common.sh@804 -- # local max_retries=100
- 01:54:56	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
+8388608 bytes (8.4 MB, 8.0 MiB) copied, 0.027466 s, 305 MB/s
+ 07:05:24	-- blobfs/blobfs.sh@166 -- # blobfs_create_test
+ 07:05:24	-- blobfs/blobfs.sh@72 -- # blobfs_start_app
+ 07:05:24	-- blobfs/blobfs.sh@37 -- # blobfs_pid=493189
+ 07:05:24	-- blobfs/blobfs.sh@39 -- # echo 'Process blobfs pid: 493189'
+Process blobfs pid: 493189
+ 07:05:24	-- blobfs/blobfs.sh@40 -- # waitforlisten 493189 /var/tmp/spdk-blobfs.sock
+ 07:05:24	-- common/autotest_common.sh@799 -- # '[' -z 493189 ']'
+ 07:05:24	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
+ 07:05:24	-- common/autotest_common.sh@804 -- # local max_retries=100
+ 07:05:24	-- blobfs/blobfs.sh@36 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
+ 07:05:24	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
 Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...
- 01:54:56	-- common/autotest_common.sh@808 -- # xtrace_disable
- 01:54:56	-- common/autotest_common.sh@10 -- # set +x
- 01:54:56	-- blobfs/blobfs.sh@35 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
-[2024-07-09 01:54:56.089449] Starting SPDK v23.09 git sha1 fb13eebf5 / DPDK 23.07.0 initialization...
-[2024-07-09 01:54:56.090536] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid192753 ]
+ 07:05:24	-- common/autotest_common.sh@808 -- # xtrace_disable
+ 07:05:24	-- common/autotest_common.sh@10 -- # set +x
+[2024-07-09 07:05:24.593603] Starting SPDK v23.09 git sha1 900514b48 / DPDK 23.07.0 initialization...
+[2024-07-09 07:05:24.593747] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid493189 ]
 TELEMETRY: No legacy callbacks, legacy socket not created
-[2024-07-09 01:54:56.143147] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
-[2024-07-09 01:54:56.165751] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
- 01:54:56	-- common/autotest_common.sh@828 -- # (( i == 0 ))
- 01:54:56	-- common/autotest_common.sh@832 -- # return 0
-  01:54:56	-- blobfs/blobfs.sh@41 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
- 01:54:57	-- blobfs/blobfs.sh@41 -- # result=True
- 01:54:57	-- blobfs/blobfs.sh@42 -- # '[' True '!=' True ']'
- 01:54:57	-- blobfs/blobfs.sh@74 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_create BlobfsBdev
+[2024-07-09 07:05:24.647246] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
+[2024-07-09 07:05:24.668933] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
+ 07:05:25	-- common/autotest_common.sh@828 -- # (( i == 0 ))
+ 07:05:25	-- common/autotest_common.sh@832 -- # return 0
+  07:05:25	-- blobfs/blobfs.sh@42 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
+ 07:05:25	-- blobfs/blobfs.sh@42 -- # result=True
+ 07:05:25	-- blobfs/blobfs.sh@43 -- # '[' True '!=' True ']'
+ 07:05:25	-- blobfs/blobfs.sh@75 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_create BlobfsBdev
 True
-  01:54:57	-- blobfs/blobfs.sh@77 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_detect BlobfsBdev
- 01:54:57	-- blobfs/blobfs.sh@77 -- # result=True
- 01:54:57	-- blobfs/blobfs.sh@78 -- # '[' True '!=' True ']'
- 01:54:57	-- blobfs/blobfs.sh@82 -- # killprocess 192753
- 01:54:57	-- common/autotest_common.sh@906 -- # '[' -z 192753 ']'
- 01:54:57	-- common/autotest_common.sh@910 -- # kill -0 192753
-  01:54:57	-- common/autotest_common.sh@911 -- # uname
- 01:54:57	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
-  01:54:57	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 192753
- 01:54:57	-- common/autotest_common.sh@912 -- # process_name=reactor_0
- 01:54:57	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
- 01:54:57	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 192753'
-killing process with pid 192753
- 01:54:57	-- common/autotest_common.sh@925 -- # kill 192753
- 01:54:57	-- common/autotest_common.sh@930 -- # wait 192753
- 01:54:58	-- blobfs/blobfs.sh@167 -- # mkdir -p /tmp/spdk_tmp_mount
- 01:54:58	-- blobfs/blobfs.sh@168 -- # blobfs_fuse_test
- 01:54:58	-- blobfs/blobfs.sh@86 -- # '[' '!' -d /usr/include/fuse3 ']'
- 01:54:58	-- blobfs/blobfs.sh@93 -- # blobfs_pid=192769
- 01:54:58	-- blobfs/blobfs.sh@94 -- # echo 'Process blobfs pid: 192769'
-Process blobfs pid: 192769
- 01:54:58	-- blobfs/blobfs.sh@98 -- # waitforlisten 192769 /var/tmp/spdk.sock
- 01:54:58	-- blobfs/blobfs.sh@92 -- # /home/kilosigh/Documents/spdk/test/blobfs/fuse/fuse /home/kilosigh/Documents/spdk/test/blobfs/config BlobfsBdev /tmp/spdk_tmp_mount
- 01:54:58	-- common/autotest_common.sh@799 -- # '[' -z 192769 ']'
- 01:54:58	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk.sock
- 01:54:58	-- common/autotest_common.sh@804 -- # local max_retries=100
- 01:54:58	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk.sock...'
+  07:05:26	-- blobfs/blobfs.sh@78 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_detect BlobfsBdev
+ 07:05:26	-- blobfs/blobfs.sh@78 -- # result=True
+ 07:05:26	-- blobfs/blobfs.sh@79 -- # '[' True '!=' True ']'
+ 07:05:26	-- blobfs/blobfs.sh@83 -- # killprocess 493189
+ 07:05:26	-- common/autotest_common.sh@906 -- # '[' -z 493189 ']'
+ 07:05:26	-- common/autotest_common.sh@910 -- # kill -0 493189
+  07:05:26	-- common/autotest_common.sh@911 -- # uname
+ 07:05:26	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
+  07:05:26	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 493189
+ 07:05:26	-- common/autotest_common.sh@912 -- # process_name=reactor_0
+ 07:05:26	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
+ 07:05:26	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 493189'
+killing process with pid 493189
+ 07:05:26	-- common/autotest_common.sh@925 -- # kill 493189
+ 07:05:26	-- common/autotest_common.sh@930 -- # wait 493189
+ 07:05:26	-- blobfs/blobfs.sh@169 -- # mkdir -p /tmp/spdk_tmp_mount
+ 07:05:26	-- blobfs/blobfs.sh@170 -- # blobfs_fuse_test
+ 07:05:26	-- blobfs/blobfs.sh@87 -- # '[' '!' -d /usr/include/fuse3 ']'
+ 07:05:26	-- blobfs/blobfs.sh@94 -- # blobfs_pid=493205
+ 07:05:26	-- blobfs/blobfs.sh@95 -- # echo 'Process blobfs pid: 493205'
+Process blobfs pid: 493205
+ 07:05:26	-- blobfs/blobfs.sh@99 -- # waitforlisten 493205 /var/tmp/spdk.sock
+ 07:05:26	-- blobfs/blobfs.sh@93 -- # /home/kilosigh/Documents/spdk/test/blobfs/fuse/fuse /home/kilosigh/Documents/spdk/test/blobfs/config BlobfsBdev /tmp/spdk_tmp_mount
+ 07:05:26	-- common/autotest_common.sh@799 -- # '[' -z 493205 ']'
+ 07:05:26	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk.sock
+ 07:05:26	-- common/autotest_common.sh@804 -- # local max_retries=100
+ 07:05:26	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk.sock...'
 Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk.sock...
- 01:54:58	-- common/autotest_common.sh@808 -- # xtrace_disable
- 01:54:58	-- common/autotest_common.sh@10 -- # set +x
-[2024-07-09 01:54:58.091448] Starting SPDK v23.09 git sha1 fb13eebf5 / DPDK 23.07.0 initialization...
-[2024-07-09 01:54:58.091601] [ DPDK EAL parameters: spdk_fuse --no-shconf -c 0x3 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid192769 ]
+ 07:05:26	-- common/autotest_common.sh@808 -- # xtrace_disable
+ 07:05:26	-- common/autotest_common.sh@10 -- # set +x
+[2024-07-09 07:05:26.605703] Starting SPDK v23.09 git sha1 900514b48 / DPDK 23.07.0 initialization...
+[2024-07-09 07:05:26.605842] [ DPDK EAL parameters: spdk_fuse --no-shconf -c 0x3 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid493205 ]
 TELEMETRY: No legacy callbacks, legacy socket not created
-[2024-07-09 01:54:58.146308] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 2
-[2024-07-09 01:54:58.168157] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 1
-[2024-07-09 01:54:58.168262] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
+[2024-07-09 07:05:26.659180] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 2
+[2024-07-09 07:05:26.680498] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 1
+[2024-07-09 07:05:26.680531] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
 Mounting filesystem on bdev BlobfsBdev to path /tmp/spdk_tmp_mount...
-[2024-07-09 01:54:58.317305] blobfs_fuse.c: 239:fuse_loop_new_thread: *NOTICE*: Start to loop blobfs on bdev BlobfsBdev mounted at /tmp/spdk_tmp_mount
- 01:54:58	-- common/autotest_common.sh@828 -- # (( i == 0 ))
- 01:54:58	-- common/autotest_common.sh@832 -- # return 0
- 01:54:58	-- blobfs/blobfs.sh@100 -- # sleep 1
- 01:54:59	-- blobfs/blobfs.sh@103 -- # mount
- 01:54:59	-- blobfs/blobfs.sh@103 -- # grep /tmp/spdk_tmp_mount
+[2024-07-09 07:05:26.847199] blobfs_fuse.c: 303:fuse_loop_new_thread: *NOTICE*: Start to loop blobfs on bdev BlobfsBdev mounted at /tmp/spdk_tmp_mount
+ 07:05:27	-- common/autotest_common.sh@828 -- # (( i == 0 ))
+ 07:05:27	-- common/autotest_common.sh@832 -- # return 0
+ 07:05:27	-- blobfs/blobfs.sh@101 -- # sleep 1
+ 07:05:28	-- blobfs/blobfs.sh@104 -- # mount
+ 07:05:28	-- blobfs/blobfs.sh@104 -- # grep /tmp/spdk_tmp_mount
 BlobfsBdev on /tmp/spdk_tmp_mount type fuse.BlobfsBdev (rw,nosuid,nodev,relatime,user_id=0,group_id=0)
- 01:54:59	-- blobfs/blobfs.sh@106 -- # dd if=/dev/urandom of=/tmp/spdk_tmp_mount/rand_file bs=4k count=1k
-1024+0 records in
-1024+0 records out
-4194304 bytes (4.2 MB, 4.0 MiB) copied, 0.138156 s, 30.4 MB/s
- 01:55:00	-- blobfs/blobfs.sh@108 -- # umount /tmp/spdk_tmp_mount
- 01:55:00	-- blobfs/blobfs.sh@109 -- # sleep 1
-[2024-07-09 01:55:00.138024] blobfs_fuse.c: 247:fuse_loop_new_thread: *NOTICE*: Blobfs on bdev BlobfsBdev unmounted from /tmp/spdk_tmp_mount
- 01:55:01	-- blobfs/blobfs.sh@110 -- # killprocess 192769
- 01:55:01	-- common/autotest_common.sh@906 -- # '[' -z 192769 ']'
- 01:55:01	-- common/autotest_common.sh@910 -- # kill -0 192769
-  01:55:01	-- common/autotest_common.sh@911 -- # uname
- 01:55:01	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
-  01:55:01	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 192769
- 01:55:01	-- common/autotest_common.sh@912 -- # process_name=reactor_0
- 01:55:01	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
- 01:55:01	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 192769'
-killing process with pid 192769
- 01:55:01	-- common/autotest_common.sh@925 -- # kill 192769
- 01:55:01	-- common/autotest_common.sh@930 -- # wait 192769
-done.
- 01:55:01	-- blobfs/blobfs.sh@113 -- # '[' -f /tmp/spdk_tmp_mount/rand_file ']'
- 01:55:01	-- blobfs/blobfs.sh@118 -- # blobfs_start_app
- 01:55:01	-- blobfs/blobfs.sh@36 -- # blobfs_pid=192813
- 01:55:01	-- blobfs/blobfs.sh@38 -- # echo 'Process blobfs pid: 192813'
-Process blobfs pid: 192813
- 01:55:01	-- blobfs/blobfs.sh@39 -- # waitforlisten 192813 /var/tmp/spdk-blobfs.sock
- 01:55:01	-- blobfs/blobfs.sh@35 -- # /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc -r /var/tmp/spdk-blobfs.sock --json /home/kilosigh/Documents/spdk/test/blobfs/config
- 01:55:01	-- common/autotest_common.sh@799 -- # '[' -z 192813 ']'
- 01:55:01	-- common/autotest_common.sh@803 -- # local rpc_addr=/var/tmp/spdk-blobfs.sock
- 01:55:01	-- common/autotest_common.sh@804 -- # local max_retries=100
- 01:55:01	-- common/autotest_common.sh@806 -- # echo 'Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...'
-Waiting for process to start up and listen on UNIX domain socket /var/tmp/spdk-blobfs.sock...
- 01:55:01	-- common/autotest_common.sh@808 -- # xtrace_disable
- 01:55:01	-- common/autotest_common.sh@10 -- # set +x
-[2024-07-09 01:55:01.264056] Starting SPDK v23.09 git sha1 fb13eebf5 / DPDK 23.07.0 initialization...
-[2024-07-09 01:55:01.264194] [ DPDK EAL parameters: bdev_svc --no-shconf -c 0x1 --huge-unlink --log-level=lib.eal:6 --log-level=lib.cryptodev:5 --log-level=user1:6 --iova-mode=pa --base-virtaddr=0x200000000000 --match-allocations --file-prefix=spdk_pid192813 ]
-TELEMETRY: No legacy callbacks, legacy socket not created
-[2024-07-09 01:55:01.316818] app.c: 786:spdk_app_start: *NOTICE*: Total cores available: 1
-[2024-07-09 01:55:01.338676] reactor.c: 937:reactor_run: *NOTICE*: Reactor started on core 0
- 01:55:01	-- common/autotest_common.sh@828 -- # (( i == 0 ))
- 01:55:01	-- common/autotest_common.sh@832 -- # return 0
-  01:55:01	-- blobfs/blobfs.sh@41 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_set_cache_size 512
- 01:55:01	-- blobfs/blobfs.sh@41 -- # result=True
- 01:55:01	-- blobfs/blobfs.sh@42 -- # '[' True '!=' True ']'
- 01:55:01	-- blobfs/blobfs.sh@119 -- # /home/kilosigh/Documents/spdk/scripts/rpc.py -s /var/tmp/spdk-blobfs.sock blobfs_mount BlobfsBdev /tmp/spdk_tmp_mount
-[2024-07-09 01:55:01.805173] blobfs_fuse.c: 239:fuse_loop_new_thread: *NOTICE*: Start to loop blobfs on bdev BlobfsBdev mounted at /tmp/spdk_tmp_mount
-True
- 01:55:01	-- blobfs/blobfs.sh@121 -- # gdb -p 192813
+ 07:05:28	-- blobfs/blobfs.sh@106 -- # gdb -p 493205
 GNU gdb (Ubuntu 9.2-0ubuntu1~20.04.2) 9.2
 Copyright (C) 2020 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -235,43 +188,136 @@ Find the GDB manual and other documentation resources online at:
 
 For help, type "help".
 Type "apropos word" to search for commands related to "word".
-Attaching to process 192813
-[New LWP 192815]
-[New LWP 192816]
-[New LWP 192820]
+Attaching to process 493205
+[New LWP 493207]
+[New LWP 493208]
+[New LWP 493209]
+[New LWP 493212]
 [Thread debugging using libthread_db enabled]
 Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-0x0000556bc85118f6 in rte_rdtsc () at /home/kilosigh/Documents/spdk/dpdk/build/include/rte_cycles.h:60
+0x000055fec1734fe6 in rte_rdtsc () at /home/kilosigh/Documents/spdk/dpdk/build/include/rte_cycles.h:60
 60	rte_get_tsc_cycles(void) { return rte_rdtsc(); }
+(gdb) b fuse_getattr
+Breakpoint 1 at 0x55fec16cacb0: fuse_getattr. (2 locations)
+(gdb) b fuse_readdir
+Breakpoint 2 at 0x55fec16ca790: file blobfs_fuse.c, line 107.
+(gdb) b fuse_mknod
+Breakpoint 3 at 0x55fec16cac80: file blobfs_fuse.c, line 157.
+(gdb) c
+Continuing.
+[Switching to Thread 0x7f5373fff700 (LWP 493212)]
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (path=0x7f536c118000 "/", stbuf=0x7f5373ffd8f0, fi=0x0) at blobfs_fuse.c:72
+72	{
+(gdb) 
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (path=0x7f536c118000 "/a.txt", stbuf=0x7f5373ffd920, fi=0x0)
+    at blobfs_fuse.c:72
+72	{
+(gdb) 
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (fi=<optimized out>, stbuf=0x7f5373ffd920, path=0x7f536c118000 "/a.txt")
+    at blobfs_fuse.c:89
+89		rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, strrchr(path, '/') + 1, &stat);
+(gdb) c
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 3, fuse_mknod (path=0x7f536c118000 "/a.txt", mode=33188, rdev=0) at blobfs_fuse.c:157
+157	{
+(gdb) c
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (path=0x7f536c118000 "/a.txt", stbuf=0x7f5373ffd920, fi=0x0)
+    at blobfs_fuse.c:72
+72	{
+(gdb) c
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (fi=<optimized out>, stbuf=0x7f5373ffd920, path=0x7f536c118000 "/a.txt")
+    at blobfs_fuse.c:89
+89		rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, strrchr(path, '/') + 1, &stat);
+(gdb) c
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (path=0x7f536c118000 "/a.txt", stbuf=0x7f5373ffd850, fi=0x0)
+    at blobfs_fuse.c:72
+72	{
+(gdb) c
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (fi=<optimized out>, stbuf=0x7f5373ffd850, path=0x7f536c118000 "/a.txt")
+    at blobfs_fuse.c:89
+89		rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, strrchr(path, '/') + 1, &stat);
+(gdb) c
+Continuing.
+
+Thread 5 "reactor_0" hit Breakpoint 1, fuse_getattr (path=0x7f536c118000 "/", stbuf=0x7f5373ffd8f0, fi=0x0) at blobfs_fuse.c:72
+72	{
+(gdb) c
+Continuing.
+
+Thread 1 "reactor_0" received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7f537a3f19c0 (LWP 493205)]
+0x000055fec16cd3e7 in strcpy (__src=<optimized out>, __dest=<optimized out>) at blobfs.c:955
+955			father = fs_find_file(fs, f->father_name);
+(gdb) c
+Continuing.
+Couldn't get registers: No such process.
+Couldn't get registers: No such process.
+(gdb) [Thread 0x7f5373fff700 (LWP 493212) exited]
+[Thread 0x7f53793ed700 (LWP 493209) exited]
+[Thread 0x7f5379bee700 (LWP 493208) exited]
+[Thread 0x7f537a3ef700 (LWP 493207) exited]
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+The program no longer exists.
+
+The program is not being run.
+(gdb) 
+The program is not being run.
 (gdb) q
-A debugging session is active.
+./test/blobfs/blobfs.sh: line 86: 493205 Segmentation fault      (core dumped) $rootdir/test/blobfs/fuse/fuse ${conf_file} ${bdevname} $mount_dir
+ 07:06:40	-- blobfs/blobfs.sh@108 -- # dd if=/dev/urandom of=/tmp/spdk_tmp_mount/rand_file bs=4k count=1k
+dd: failed to open '/tmp/spdk_tmp_mount/rand_file': Transport endpoint is not connected
+  07:06:40	-- blobfs/blobfs.sh@108 -- # trap - ERR
+  07:06:40	-- blobfs/blobfs.sh@108 -- # print_backtrace
+  07:06:40	-- common/autotest_common.sh@1106 -- # [[ ehxBET =~ e ]]
+  07:06:40	-- common/autotest_common.sh@1108 -- # args=("${BASH_ARGV[@]}")
+  07:06:40	-- common/autotest_common.sh@1108 -- # local args
+  07:06:40	-- common/autotest_common.sh@1110 -- # xtrace_disable
+  07:06:40	-- common/autotest_common.sh@10 -- # set +x
+========== Backtrace start: ==========
 
-	Inferior 1 [process 192813] will be detached.
+in ./test/blobfs/blobfs.sh:108 -> blobfs_fuse_test([])
+     ...
+   103 		# check mount status
+   104 		mount | grep "$mount_dir"
+   105 	
+   106 		gdb -p $blobfs_pid
+   107 		# create a rand file in mount dir
+=> 108 		dd if=/dev/urandom of=${mount_dir}/rand_file bs=4k count=1k
+   109 	
+   110 		umount ${mount_dir}
+   111 		sleep 1
+   112 		killprocess $blobfs_pid
+   113 	
+     ...
+in ./test/blobfs/blobfs.sh:170 -> main([])
+     ...
+   165 	
+   166 	blobfs_create_test
+   167 	
+   168 	# Create dir for FUSE mount
+   169 	mkdir -p $mount_dir
+=> 170 	blobfs_fuse_test
+     ...
 
-Quit anyway? (y or n) y
-Detaching from program: /home/kilosigh/Documents/spdk/test/app/bdev_svc/bdev_svc, process 192813
-[Inferior 1 (process 192813) detached]
- 01:55:07	-- blobfs/blobfs.sh@123 -- # md5sum /tmp/spdk_tmp_mount/rand_file
-35bd7b83a9f92d6f80e735ebd3cbe5b5  /tmp/spdk_tmp_mount/rand_file
- 01:55:07	-- blobfs/blobfs.sh@124 -- # rm /tmp/spdk_tmp_mount/rand_file
- 01:55:07	-- blobfs/blobfs.sh@126 -- # umount /tmp/spdk_tmp_mount
-[2024-07-09 01:55:07.274941] blobfs_fuse.c: 247:fuse_loop_new_thread: *NOTICE*: Blobfs on bdev BlobfsBdev unmounted from /tmp/spdk_tmp_mount
- 01:55:07	-- blobfs/blobfs.sh@127 -- # sleep 1
- 01:55:08	-- blobfs/blobfs.sh@128 -- # killprocess 192813
- 01:55:08	-- common/autotest_common.sh@906 -- # '[' -z 192813 ']'
- 01:55:08	-- common/autotest_common.sh@910 -- # kill -0 192813
-  01:55:08	-- common/autotest_common.sh@911 -- # uname
- 01:55:08	-- common/autotest_common.sh@911 -- # '[' Linux = Linux ']'
-  01:55:08	-- common/autotest_common.sh@912 -- # ps --no-headers -o comm= 192813
- 01:55:08	-- common/autotest_common.sh@912 -- # process_name=reactor_0
- 01:55:08	-- common/autotest_common.sh@916 -- # '[' reactor_0 = sudo ']'
- 01:55:08	-- common/autotest_common.sh@924 -- # echo 'killing process with pid 192813'
-killing process with pid 192813
- 01:55:08	-- common/autotest_common.sh@925 -- # kill 192813
- 01:55:08	-- common/autotest_common.sh@930 -- # wait 192813
- 01:55:08	-- blobfs/blobfs.sh@1 -- # cleanup
- 01:55:08	-- blobfs/blobfs.sh@25 -- # [[ -n 192813 ]]
- 01:55:08	-- blobfs/blobfs.sh@25 -- # [[ -e /proc/192813 ]]
- 01:55:08	-- blobfs/blobfs.sh@29 -- # rm -rf /tmp/spdk_tmp_mount
- 01:55:08	-- blobfs/blobfs.sh@30 -- # rm -f /home/kilosigh/Documents/spdk/test/blobfs/blobfs_file
- 01:55:08	-- blobfs/blobfs.sh@31 -- # rm -f /home/kilosigh/Documents/spdk/test/blobfs/config
+========== Backtrace end ==========
+  07:06:40	-- common/autotest_common.sh@1147 -- # return 0
+ 07:06:40	-- blobfs/blobfs.sh@1 -- # cleanup
+ 07:06:40	-- blobfs/blobfs.sh@25 -- # [[ -n 493205 ]]
+ 07:06:40	-- blobfs/blobfs.sh@25 -- # [[ -e /proc/493205 ]]
+ 07:06:40	-- blobfs/blobfs.sh@29 -- # rm -rf /tmp/spdk_tmp_mount
+rm: cannot remove '/tmp/spdk_tmp_mount': Is a directory

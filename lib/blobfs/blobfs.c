@@ -109,8 +109,8 @@ struct spdk_file {
 	TAILQ_HEAD(open_requests_head, spdk_fs_request) open_requests;
 	TAILQ_HEAD(sync_requests_head, spdk_fs_request) sync_requests;
 	TAILQ_ENTRY(spdk_file)	cache_tailq;
-	struct spdk_file *father;
-	struct spdk_file *children[SPDK_DIR_FILE_MAX];
+	char father_name[SPDK_FILE_NAME_MAX];
+	char children_names[SPDK_DIR_FILE_MAX][SPDK_FILE_NAME_MAX];
 	int child_count;
 };
 
@@ -940,7 +940,8 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 			spdk_file_stat_op_complete cb_fn, void *cb_arg)
 {
 	struct spdk_file_stat stat;
-	struct spdk_file *f = NULL;
+	struct spdk_file *f = NULL, *father;
+	int c;
 
 	if (strnlen(name, SPDK_FILE_NAME_MAX + 1) == SPDK_FILE_NAME_MAX + 1) {
 		cb_fn(cb_arg, NULL, -ENAMETOOLONG);
@@ -952,11 +953,16 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 		stat.blobid = f->blobid;
 		stat.size = f->append_pos >= f->length ? f->append_pos : f->length;
 		stat.child_count = f->child_count;
-		strcpy(stat.father_name, f->father->name);
+		father = fs_find_file(fs, f->father_name);
+		if(!father) return -ENOENT;
+		//strcpy(stat.father_name, father->name);
+		for (c = 0; c<SPDK_FILE_NAME_MAX && father->name[c] != '\0'; c++){
+			stat.father_name[c] = father->name[c];
+		}stat.father_name[c] = father->name[c];
 		stat.type = f->type;
 		for (int c = 0; c < f->child_count; c++){
 			for (int i = 0; i < SPDK_FILE_NAME_MAX; i++){
-				stat.children_names[c][i] = f->children[c]->name[i];
+				stat.children_names[c][i] = father->children_names[c][i];
 				if (stat.children_names[c][i] == '\0') break;
 			} 
 		}
@@ -1191,9 +1197,9 @@ spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
 	char file_name[SPDK_FILE_NAME_MAX];
 	char father_name[SPDK_FILE_NAME_MAX];
 	int rc = path_parser(name, father_name, file_name);
-	if (!rc) return rc;
+	if (rc) return rc;
 	rc = spdk_fs_create_file(fs, ctx, file_name);
-	if (!rc) return rc;
+	if (rc) return rc;
 	file = fs_find_file(fs, file_name);
 	if (!file) return -ENOENT;
 	file->child_count = 0;
@@ -1203,18 +1209,18 @@ spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
 		father_dir = fs_find_file(fs, "/");
 		if (!father_dir) {
 			rc = spdk_fs_create_file(fs, ctx, "/");
-			if (!rc) return rc;
+			if (rc) return rc;
 			father_dir = fs_find_file(fs, "/");
 			if (!father_dir) {
 				printf("Found no root dir!\n");
 				return -ENOENT;
 			}
-			father_dir->father = NULL;
+			father_dir->father_name[0] = '\0';
 			father_dir->child_count = 0;
 			father_dir->type = 1;
 		}
-		file->father = father_dir;
-		father_dir->children[(father_dir->child_count)++] = file;
+		strcpy(file->father_name, father_name);
+		strcpy(father_dir->children_names[(father_dir->child_count)++], file_name);
 		return rc;
 	}
 	father_dir = fs_find_file(fs, father_name);
@@ -1222,9 +1228,11 @@ spdk_fs_fuse_create_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
 		printf("Find no father named %s!\n", father_name);
 		return -ENOENT;
 	}
-	file->father = father_dir;
+	//file->father = father_dir;
+	strcpy(file->father_name, father_name);
 	file->type = type;
-	father_dir->children[(father_dir->child_count)++] = file;
+	//father_dir->children[(father_dir->child_count)++] = file;
+	strcpy(father_dir->children_names[(father_dir->child_count)++], file_name);
 	return rc;
 }
 
@@ -1390,7 +1398,7 @@ spdk_fs_fuse_open_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *ct
 {
 	char file_name[SPDK_FILE_NAME_MAX];
 	int rc = path_parser(name, NULL, file_name);
-	if (!rc) return rc;
+	if (rc) return rc;
 	rc = spdk_fs_open_file(fs, ctx, file_name, flags, file);
 	return rc;
 }
@@ -1652,11 +1660,11 @@ spdk_fs_fuse_delete_file(struct spdk_filesystem *fs, struct spdk_fs_thread_ctx *
 	char file_name[SPDK_FILE_NAME_MAX];
 	struct spdk_file *file, *father_dir;
 	int rc = path_parser(name, NULL, file_name);
-	if (!rc) return rc;
+	if (rc) return rc;
 	file = fs_find_file(fs, file_name);
 	if (!file) return -ENOENT;
 	if (file->child_count != 0) return -ENOTEMPTY;
-	father_dir = file->father;
+	father_dir = fs_find_file(fs, file->father_name);
 	rc = spdk_fs_delete_file(fs, ctx, file_name);
 	// sync problem
 	father_dir->child_count--;
@@ -2803,12 +2811,6 @@ spdk_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
 	}
 }
 
-int64_t spdk_fuse_file_read(struct spdk_file *file, struct spdk_fs_thread_ctx *ctx,
-		       void *payload, uint64_t offset, uint64_t length)
-{
-	int rc = spdk_file_read(file, ctx, payload, offset, length);
-	return rc;
-}
 
 
 static void

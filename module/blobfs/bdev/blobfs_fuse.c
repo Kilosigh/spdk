@@ -80,14 +80,14 @@ fuse_getattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi)
 		stbuf->st_nlink = 2 ;
 		if (!file) return 0;
 		rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, "/", &stat);
-		if (!rc) return rc;
+		if (rc) return rc;
 		stbuf->st_nlink += stat.child_count;
 		return 0;
 	}
 	//struct spdk_file *file = fs_find_file(thd_bfuse->fs, strrchr(path, '/') + 1);
 
 	rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, strrchr(path, '/') + 1, &stat);
-	if (!rc) return rc;
+	if (rc) return rc;
 	if (!stat.type){
 		stbuf->st_mode = S_IFREG | 0644;
 		stbuf->st_nlink = 1;
@@ -108,6 +108,7 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	struct spdk_file *file;
 	const char *filename;
 	const char *target = strrchr(path, '/') + 1;
+	const char *root_dir = "/";
 	spdk_fs_iter iter;
 	struct spdk_file_stat stat;
 	int rc;
@@ -116,6 +117,8 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 	filler(buf, ".", NULL, 0, 0);
 	filler(buf, "..", NULL, 0, 0);
+
+	if (!strcmp(path, "/")) target = root_dir;
 
 	iter = spdk_fs_iter_first(thd_bfuse->fs);
 	/*while (iter != NULL)
@@ -132,12 +135,17 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		iter = spdk_fs_iter_next(iter);
 		filename = spdk_file_get_name(file);
 		//printf("finding dir %s, now find at %s\n", target, filename);
-		if (!strcmp(target, filename)) break;
+		if (!strcmp(target, filename)) break;	
 	}
-	if (!iter) printf("Found no dir file named %s\n", target);
+	if (!iter) {
+		if (target == root_dir) return 0;
+		fprintf(stderr, "Found no dir file named %s\n", target);
+		return -ENOENT;
+	}
 	rc = spdk_fs_file_stat(thd_bfuse->fs, thd_bfuse->channel, target, &stat);
-	if (!rc) return rc;
+	if (rc) return rc;
 	if (!stat.type) fprintf(stderr, "%s is not a dir!\n", target);
+
 	for (int c = 0; c < stat.child_count; c++){
 		filler(buf, stat.children_names[c], NULL, 0, 0);
 	}

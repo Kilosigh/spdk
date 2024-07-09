@@ -25,8 +25,9 @@ function cleanup() {
 	if [[ -n $blobfs_pid && -e /proc/$blobfs_pid ]]; then
 		killprocess $blobfs_pid
 	fi
-
+	
 	rm -rf $mount_dir
+	umount $mount_dir
 	rm -f $tmp_file
 	rm -f $conf_file
 }
@@ -102,6 +103,7 @@ function blobfs_fuse_test() {
 	# check mount status
 	mount | grep "$mount_dir"
 
+	gdb -p $blobfs_pid
 	# create a rand file in mount dir
 	dd if=/dev/urandom of=${mount_dir}/rand_file bs=4k count=1k
 
