@@ -229,13 +229,13 @@ static void fs_free_io_channels(struct spdk_filesystem *fs);
 
 int path_parser(const char *path, char *father_name, char *file_name){
 	const char *last_slash = strrchr(path, '/');
-	const char *p = last_slash;
-	int c = 0;
+	const char *p = last_slash + 1;
+	int c;
 	// file_name fill
-	for (; *p != '\0'; c++) {
-		p++;
+	for (c = 0; *p != '\0'; c++) {
 		file_name[c] = *p;
-	} 
+		p++;
+	} file_name[c] = '\0';
 	if (!father_name)  return 0;
 	if (last_slash == path) {//root dir
 		strncpy(father_name, "/", 2);
@@ -245,9 +245,9 @@ int path_parser(const char *path, char *father_name, char *file_name){
 			last_slash--;
 		last_slash++;
 		for (c = 0; *last_slash != '/'; c++) {
-			last_slash++;
 			father_name[c] = *last_slash;
-		} father_name[c-1] = '\0';
+			last_slash++;
+		} father_name[c] = '\0';
 	}
 	return 0;
 }
@@ -953,19 +953,26 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 		stat.blobid = f->blobid;
 		stat.size = f->append_pos >= f->length ? f->append_pos : f->length;
 		stat.child_count = f->child_count;
-		father = fs_find_file(fs, f->father_name);
-		if(!father) return -ENOENT;
-		//strcpy(stat.father_name, father->name);
-		for (c = 0; c<SPDK_FILE_NAME_MAX && father->name[c] != '\0'; c++){
-			stat.father_name[c] = father->name[c];
-		}stat.father_name[c] = father->name[c];
 		stat.type = f->type;
 		for (int c = 0; c < f->child_count; c++){
 			for (int i = 0; i < SPDK_FILE_NAME_MAX; i++){
-				stat.children_names[c][i] = father->children_names[c][i];
+				stat.children_names[c][i] = f->children_names[c][i];
 				if (stat.children_names[c][i] == '\0') break;
 			} 
 		}
+		if (strcmp(f->father_name, "/")){
+			stat.father_name[0] = '\0';
+		}
+		else{
+			father = fs_find_file(fs, f->father_name);
+			if(!father)  cb_fn(cb_arg, NULL, -ENOENT);
+			for (c = 0; c < SPDK_FILE_NAME_MAX && father->name[c] != '\0'; c++){
+				stat.father_name[c] = father->name[c];
+			}stat.father_name[c] = '\0';
+		}
+		//strcpy(stat.father_name, father->name);
+
+
 		cb_fn(cb_arg, &stat, 0);
 		return;
 	}

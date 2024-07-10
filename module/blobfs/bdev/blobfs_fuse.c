@@ -137,7 +137,7 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		//printf("finding dir %s, now find at %s\n", target, filename);
 		if (!strcmp(target, filename)) break;	
 	}
-	if (!iter) {
+	if (!iter && strcmp(target, filename)) {
 		if (target == root_dir) return 0;
 		fprintf(stderr, "Found no dir file named %s\n", target);
 		return -ENOENT;
