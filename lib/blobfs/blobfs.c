@@ -241,6 +241,7 @@ int path_parser(const char *path, char *father_name, char *file_name){
 		strncpy(father_name, "/", 2);
 	}
 	else{
+		last_slash--;
 		while (last_slash >= path && *last_slash != '/') 
 			last_slash--;
 		last_slash++;
