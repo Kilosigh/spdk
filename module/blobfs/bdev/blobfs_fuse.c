@@ -128,6 +128,7 @@ fuse_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		filename = spdk_file_get_name(file);
 		filler(buf, &filename[1], NULL, 0, 0);
 	}*/
+	if (!iter)   return 0;
 
 	while (iter != NULL)
 	{
