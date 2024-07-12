@@ -953,14 +953,15 @@ spdk_fs_file_stat_async(struct spdk_filesystem *fs, const char *name,
 	}
 
 	f = fs_find_file(fs, name);
-	father = f->father;
+	
 	if (f != NULL) {
+		father = f->father;
 		stat.blobid = f->blobid;
 		stat.size = f->append_pos >= f->length ? f->append_pos : f->length;
 		stat.child_count = f->child_count;
 		stat.type = f->type;
 		for (int c = 0; c < f->child_count; c++){
-			strcpy(stat.children_names[c], f->children[c]);
+			strcpy(stat.children_names[c], f->children[c]->name);
 		}
 		if (!father){
 			if (strcmp(f->name, "/")){
